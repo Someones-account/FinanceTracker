@@ -16,27 +16,27 @@ public record Account(UUID id, long balanceMinor, boolean open) {
         };
     }
 
-    public static List<AccountEvent> decide(Account acc, AccountCommand comm, Instant now) throws Exception {
+    public static List<AccountEvent> decide(Account acc, AccountCommand comm, Instant now) throws DomainException {
         return switch (comm) {
             case AccountCommand.Open o -> {
-                if (acc.open) throw new Exception("Account already open");
+                if (acc.open) throw new DomainException("Account already open");
                 yield List.of(new AccountEvent.AccountOpened(o.accountId(), o.name(), o.currency()));
             }
             case AccountCommand.Deposit d -> {
                 requireOpen(acc);
-                if (d.amountMinor() <= 0) throw new Exception("Amount must be positive");
+                if (d.amountMinor() <= 0) throw new DomainException("Amount must be positive");
                 yield List.of(new AccountEvent.MoneyDeposited(acc.id, d.amountMinor(), d.category(), now));
             }
             case AccountCommand.Withdraw w -> {
                 requireOpen(acc);
-                if (w.amountMinor() <= 0) throw new Exception("Amount must be positive");
-                if (acc.balanceMinor < w.amountMinor()) throw new Exception("Insufficient funds");
+                if (w.amountMinor() <= 0) throw new DomainException("Amount must be positive");
+                if (acc.balanceMinor < w.amountMinor()) throw new DomainException("Insufficient funds");
                 yield List.of(new AccountEvent.MoneyWithdrawn(acc.id, w.amountMinor(), w.category(), now));
             }
         };
     }
 
-    private static void requireOpen(Account a) throws Exception {
-        if (!a.open) throw new Exception("Account is not open");
+    private static void requireOpen(Account a) throws DomainException {
+        if (!a.open) throw new DomainException("Account is not open");
     }
 }
