@@ -4,9 +4,10 @@ import app.AccountCommandHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import projection.BalanceProjection;
-import store.PostgresEventStore;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import projection.BalanceProjection;
+import projection.CategoryReportProjection;
+import store.PostgresEventStore;
 
 import javax.sql.DataSource;
 import java.time.Clock;
@@ -33,5 +34,10 @@ public class AppConfig {
     @Bean
     public BalanceProjection balanceProjection(DataSource dataSource, PostgresEventStore eventStore) {
         return new BalanceProjection(dataSource, eventStore);
+    }
+
+    @Bean
+    public CategoryReportProjection categoryReportProjection(DataSource dataSource, PostgresEventStore eventStore) {
+        return new CategoryReportProjection(dataSource, eventStore);
     }
 }
