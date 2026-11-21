@@ -1,0 +1,9 @@
+CREATE TABLE events (
+                        global_seq   BIGSERIAL   PRIMARY KEY,
+                        aggregate_id UUID        NOT NULL,
+                        version      INT         NOT NULL,
+                        event_type   TEXT        NOT NULL,
+                        payload      JSONB       NOT NULL,
+                        recorded_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+                        UNIQUE (aggregate_id, version)
+);
