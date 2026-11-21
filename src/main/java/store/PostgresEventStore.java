@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class PostgresEventStore implements EventStore {
+public class PostgresEventStore implements EventStore, EventLog {
 
     private static final Map<String, Class<? extends AccountEvent>> TYPES = Map.of(
             "AccountOpened", AccountEvent.AccountOpened.class,
@@ -34,10 +34,8 @@ public class PostgresEventStore implements EventStore {
             try (ResultSet rs = ps.executeQuery()) {
                 List<StoredEvent> out = new ArrayList<>();
                 while (rs.next()) {
-                    Class<? extends AccountEvent> type = TYPES.get(rs.getString("event_type"));
-                    if (type == null) throw new EventStoreException("Unknown event type", null);
                     out.add(new StoredEvent(aggregateId, rs.getInt("version"),
-                            mapper.readValue(rs.getString("payload"), type)));
+                            deserialize(rs.getString("event_type"), rs.getString("payload"))));
                 }
                 return out;
             }
@@ -76,5 +74,41 @@ public class PostgresEventStore implements EventStore {
         } catch (Exception e) {
             throw new EventStoreException("Append failed for " + aggregateId, e);
         }
+    }
+
+    @Override
+    public List<GlobalEvent> loadAfter(long globalSeq, int limit) {
+        String sql = """
+                SELECT global_seq, aggregate_id, version, event_type, payload
+                FROM events
+                WHERE global_seq > ?
+                ORDER BY global_seq
+                LIMIT ?
+                """;
+        try (Connection c = ds.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setLong(1, globalSeq);
+            ps.setInt(2, limit);
+            try (ResultSet rs = ps.executeQuery()) {
+                List<GlobalEvent> out = new ArrayList<>();
+                while (rs.next()) {
+                    out.add(new GlobalEvent(
+                            rs.getLong("global_seq"),
+                            rs.getObject("aggregate_id", UUID.class),
+                            rs.getInt("version"),
+                            deserialize(rs.getString("event_type"), rs.getString("payload"))));
+                }
+                return out;
+            }
+        } catch (Exception e) {
+            throw new EventStoreException("loadAfter failed at " + globalSeq, e);
+        }
+    }
+
+    private AccountEvent deserialize(String type, String payload) throws Exception {
+        Class<? extends AccountEvent> clazz = TYPES.get(type);
+        if (clazz == null) {
+            throw new EventStoreException("Unknown event type: " + type, null);
+        }
+        return mapper.readValue(payload, clazz);
     }
 }
