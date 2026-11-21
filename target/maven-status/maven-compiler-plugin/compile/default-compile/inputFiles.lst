@@ -1,0 +1,12 @@
+C:\Users\sashk\IdeaProjects\FinanceTracker\src\main\java\app\AccountCommandHandler.java
+C:\Users\sashk\IdeaProjects\FinanceTracker\src\main\java\domain\Account.java
+C:\Users\sashk\IdeaProjects\FinanceTracker\src\main\java\domain\AccountCommand.java
+C:\Users\sashk\IdeaProjects\FinanceTracker\src\main\java\domain\AccountEvent.java
+C:\Users\sashk\IdeaProjects\FinanceTracker\src\main\java\domain\DomainException.java
+C:\Users\sashk\IdeaProjects\FinanceTracker\src\main\java\Main.java
+C:\Users\sashk\IdeaProjects\FinanceTracker\src\main\java\store\ConcurrencyException.java
+C:\Users\sashk\IdeaProjects\FinanceTracker\src\main\java\store\EventStore.java
+C:\Users\sashk\IdeaProjects\FinanceTracker\src\main\java\store\EventStoreException.java
+C:\Users\sashk\IdeaProjects\FinanceTracker\src\main\java\store\InMemoryEventStore.java
+C:\Users\sashk\IdeaProjects\FinanceTracker\src\main\java\store\PostgresEventStore.java
+C:\Users\sashk\IdeaProjects\FinanceTracker\src\main\java\store\StoredEvent.java
