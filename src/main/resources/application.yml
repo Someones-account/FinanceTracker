@@ -1,7 +1,7 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/ledger
-    username: ledger
-    password: ledger
+    url: jdbc:postgresql://localhost:5433/tracker
+    username: admin
+    password: admin
   flyway:
     enabled: true
