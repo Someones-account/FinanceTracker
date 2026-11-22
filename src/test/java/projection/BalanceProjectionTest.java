@@ -1,3 +1,5 @@
+package projection;
+
 import app.AccountCommandHandler;
 import domain.AccountCommand.Deposit;
 import domain.AccountCommand.Open;
@@ -9,8 +11,6 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import projection.AccountBalance;
-import projection.BalanceProjection;
 import tracker.TrackerApplication;
 
 import java.util.UUID;
@@ -27,6 +27,7 @@ class BalanceProjectionTest {
 
     @Autowired
     AccountCommandHandler handler;
+
 
     @Autowired
     BalanceProjection projection;

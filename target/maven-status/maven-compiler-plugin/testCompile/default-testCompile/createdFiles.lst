@@ -1,4 +1,5 @@
-AccountApiTest.class
-AccountCommandHandlerTest$1.class
-AccountCommandHandlerTest.class
-AccountCommandHandlerTest$2.class
+app\AccountCommandHandlerTest$1.class
+app\AccountCommandHandlerTest$2.class
+projection\BalanceProjectionTest.class
+app\AccountCommandHandlerTest.class
+api\AccountApiTest.class

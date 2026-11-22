@@ -1,4 +1,5 @@
-import app.AccountCommandHandler;
+package app;
+
 import domain.AccountCommand;
 import domain.AccountEvent;
 import domain.DomainException;
