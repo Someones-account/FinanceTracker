@@ -1,11 +1,16 @@
 package store;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import domain.AccountEvent;
-import java.util.List;
-import java.util.UUID;
+import domain.AccountEvent.AccountOpened;
+import domain.AccountEvent.MoneyDeposited;
+import domain.AccountEvent.MoneyWithdrawn;
+import domain.AccountEvent.TransactionReversed;
 
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,9 +19,10 @@ import java.util.UUID;
 public class PostgresEventStore implements EventStore, EventLog {
 
     private static final Map<String, Class<? extends AccountEvent>> TYPES = Map.of(
-            "AccountOpened", AccountEvent.AccountOpened.class,
-            "MoneyDeposited", AccountEvent.MoneyDeposited.class,
-            "MoneyWithdrawn", AccountEvent.MoneyWithdrawn.class);
+            "AccountOpened", AccountOpened.class,
+            "MoneyDeposited", MoneyDeposited.class,
+            "MoneyWithdrawn", MoneyWithdrawn.class,
+            "TransactionReversed", TransactionReversed.class);
 
     private final DataSource ds;
     private final ObjectMapper mapper;

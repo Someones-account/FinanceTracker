@@ -1,6 +1,9 @@
 package app;
 
-import domain.AccountEvent;
+import domain.AccountEvent.AccountOpened;
+import domain.AccountEvent.MoneyDeposited;
+import domain.AccountEvent.MoneyWithdrawn;
+import domain.AccountEvent.TransactionReversed;
 import store.EventStore;
 import store.StoredEvent;
 import java.time.Instant;
@@ -15,7 +18,6 @@ public class BalanceQueryService {
     public BalanceQueryService(EventStore store) {
         this.store = store;
     }
-
     public Optional<Long> balanceAt(UUID accountId, Instant at) {
         List<StoredEvent> history = store.load(accountId);
         if (history.isEmpty()) {
@@ -25,12 +27,17 @@ public class BalanceQueryService {
         long balance = 0;
         for (StoredEvent stored : history) {
             switch (stored.event()) {
-                case AccountEvent.AccountOpened o -> { }
-                case AccountEvent.MoneyDeposited d -> {
+                case AccountOpened o -> { }
+                case MoneyDeposited d -> {
                     if (!d.at().isAfter(at)) balance += d.amountMinor();
                 }
-                case AccountEvent.MoneyWithdrawn w -> {
+                case MoneyWithdrawn w -> {
                     if (!w.at().isAfter(at)) balance -= w.amountMinor();
+                }
+                case TransactionReversed r -> {
+                    if (!r.at().isAfter(at)) {
+                        balance += r.wasDeposit() ? -r.amountMinor() : r.amountMinor();
+                    }
                 }
             }
         }
