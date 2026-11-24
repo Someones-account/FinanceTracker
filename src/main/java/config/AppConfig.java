@@ -4,13 +4,15 @@ import app.AccountCommandHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import store.EventStore;
+import projection.BalanceProjection;
 import store.PostgresEventStore;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.sql.DataSource;
 import java.time.Clock;
 
 @Configuration
+@EnableScheduling
 public class AppConfig {
 
     @Bean
@@ -19,12 +21,17 @@ public class AppConfig {
     }
 
     @Bean
-    public EventStore eventStore(DataSource dataSource, ObjectMapper objectMapper) {
+    public PostgresEventStore eventStore(DataSource dataSource, ObjectMapper objectMapper) {
         return new PostgresEventStore(dataSource, objectMapper);
     }
 
     @Bean
-    public AccountCommandHandler accountCommandHandler(EventStore eventStore, Clock clock) {
+    public AccountCommandHandler accountCommandHandler(PostgresEventStore eventStore, Clock clock) {
         return new AccountCommandHandler(eventStore, clock);
+    }
+
+    @Bean
+    public BalanceProjection balanceProjection(DataSource dataSource, PostgresEventStore eventStore) {
+        return new BalanceProjection(dataSource, eventStore);
     }
 }
