@@ -1,2 +1,3 @@
-C:\Users\sashk\IdeaProjects\FinanceTracker\src\test\java\AccountApiTest.java
-C:\Users\sashk\IdeaProjects\FinanceTracker\src\test\java\AccountCommandHandlerTest.java
+C:\Projects\FinanceTracker\src\test\java\api\AccountApiTest.java
+C:\Projects\FinanceTracker\src\test\java\app\AccountCommandHandlerTest.java
+C:\Projects\FinanceTracker\src\test\java\projection\BalanceProjectionTest.java
