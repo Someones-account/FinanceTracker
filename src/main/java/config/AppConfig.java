@@ -1,6 +1,8 @@
 package config;
 
 import app.AccountCommandHandler;
+import app.BalanceQueryService;
+import app.IdempotencyService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +31,16 @@ public class AppConfig {
     @Bean
     public AccountCommandHandler accountCommandHandler(PostgresEventStore eventStore, Clock clock) {
         return new AccountCommandHandler(eventStore, clock);
+    }
+
+    @Bean
+    public IdempotencyService idempotencyService(DataSource dataSource) {
+        return new IdempotencyService(dataSource);
+    }
+
+    @Bean
+    public BalanceQueryService balanceQueryService(PostgresEventStore eventStore) {
+        return new BalanceQueryService(eventStore);
     }
 
     @Bean
