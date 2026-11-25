@@ -3,6 +3,7 @@ package projection;
 import domain.AccountEvent.AccountOpened;
 import domain.AccountEvent.MoneyDeposited;
 import domain.AccountEvent.MoneyWithdrawn;
+import domain.AccountEvent.TransactionReversed;
 import store.EventLog;
 import store.EventStoreException;
 import store.GlobalEvent;
@@ -19,6 +20,11 @@ public class BalanceProjection extends CheckpointedProjection {
 
     public static final String NAME = "account_balances";
 
+    private static final String ADJUST = """
+            UPDATE account_balances SET balance_minor = balance_minor + ?, updated_at = now()
+            WHERE account_id = ?
+            """;
+
     private final DataSource ds;
 
     public BalanceProjection(DataSource ds, EventLog log) {
@@ -34,14 +40,10 @@ public class BalanceProjection extends CheckpointedProjection {
                     VALUES (?, ?, ?, 0)
                     ON CONFLICT (account_id) DO NOTHING
                     """, o.accountId(), o.name(), o.currency());
-            case MoneyDeposited d -> execute(c, """
-                    UPDATE account_balances SET balance_minor = balance_minor + ?, updated_at = now()
-                    WHERE account_id = ?
-                    """, d.amountMinor(), d.accountId());
-            case MoneyWithdrawn w -> execute(c, """
-                    UPDATE account_balances SET balance_minor = balance_minor - ?, updated_at = now()
-                    WHERE account_id = ?
-                    """, w.amountMinor(), w.accountId());
+            case MoneyDeposited d -> execute(c, ADJUST, d.amountMinor(), d.accountId());
+            case MoneyWithdrawn w -> execute(c, ADJUST, -w.amountMinor(), w.accountId());
+            case TransactionReversed r -> execute(c, ADJUST,
+                    r.wasDeposit() ? -r.amountMinor() : r.amountMinor(), r.accountId());
         }
     }
 

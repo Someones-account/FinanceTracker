@@ -1,6 +1,9 @@
 package projection;
 
-import domain.AccountEvent;
+import domain.AccountEvent.AccountOpened;
+import domain.AccountEvent.MoneyDeposited;
+import domain.AccountEvent.MoneyWithdrawn;
+import domain.AccountEvent.TransactionReversed;
 import store.EventLog;
 import store.EventStoreException;
 import store.GlobalEvent;
@@ -11,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -39,11 +43,16 @@ public class CategoryReportProjection extends CheckpointedProjection {
     @Override
     protected void apply(Connection c, GlobalEvent e) throws SQLException {
         switch (e.event()) {
-            case AccountEvent.AccountOpened o -> { }
-            case AccountEvent.MoneyDeposited d ->
+            case AccountOpened o -> { }
+            case MoneyDeposited d ->
                     execute(c, UPSERT, d.accountId(), monthOf(d.at()), d.category(), d.amountMinor(), 0L);
-            case AccountEvent.MoneyWithdrawn w ->
+            case MoneyWithdrawn w ->
                     execute(c, UPSERT, w.accountId(), monthOf(w.at()), w.category(), 0L, w.amountMinor());
+            case TransactionReversed r -> {
+                long income = r.wasDeposit() ? -r.amountMinor() : 0L;
+                long expense = r.wasDeposit() ? 0L : -r.amountMinor();
+                execute(c, UPSERT, r.accountId(), monthOf(r.originalAt()), r.category(), income, expense);
+            }
         }
     }
 
@@ -57,6 +66,7 @@ public class CategoryReportProjection extends CheckpointedProjection {
                 SELECT category, income_minor, expense_minor
                 FROM category_totals
                 WHERE account_id = ? AND month = ?
+                  AND (income_minor <> 0 OR expense_minor <> 0)
                 ORDER BY expense_minor DESC, category
                 """;
         try (Connection c = ds.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
@@ -75,7 +85,7 @@ public class CategoryReportProjection extends CheckpointedProjection {
         }
     }
 
-    private static java.time.LocalDate monthOf(Instant at) {
+    private static LocalDate monthOf(Instant at) {
         return at.atZone(ZoneOffset.UTC).toLocalDate().withDayOfMonth(1);
     }
 }
