@@ -1,5 +1,9 @@
-app\AccountCommandHandlerTest$1.class
+projection\CategoryReportProjectionTest.class
 app\AccountCommandHandlerTest$2.class
 projection\BalanceProjectionTest.class
+api\ReversalApiTest.class
+domain\AccountReversalTest.class
 app\AccountCommandHandlerTest.class
+app\BalanceQueryServiceTest.class
 api\AccountApiTest.class
+app\AccountCommandHandlerTest$1.class

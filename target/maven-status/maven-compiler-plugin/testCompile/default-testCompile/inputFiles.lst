@@ -1,3 +1,7 @@
 C:\Projects\FinanceTracker\src\test\java\api\AccountApiTest.java
+C:\Projects\FinanceTracker\src\test\java\api\ReversalApiTest.java
 C:\Projects\FinanceTracker\src\test\java\app\AccountCommandHandlerTest.java
+C:\Projects\FinanceTracker\src\test\java\app\BalanceQueryServiceTest.java
+C:\Projects\FinanceTracker\src\test\java\domain\AccountReversalTest.java
 C:\Projects\FinanceTracker\src\test\java\projection\BalanceProjectionTest.java
+C:\Projects\FinanceTracker\src\test\java\projection\CategoryReportProjectionTest.java
