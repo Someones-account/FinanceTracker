@@ -1,7 +1,9 @@
 package projection;
 
 import app.AccountCommandHandler;
-import domain.AccountCommand;
+import domain.AccountCommand.Deposit;
+import domain.AccountCommand.Open;
+import domain.AccountCommand.Withdraw;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,6 +11,7 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import tracker.TrackerApplication;
 
 import java.time.YearMonth;
 import java.time.ZoneOffset;
@@ -16,7 +19,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@SpringBootTest(classes = TrackerApplication.class)
 @Testcontainers
 class CategoryReportProjectionTest {
 
@@ -32,11 +35,11 @@ class CategoryReportProjectionTest {
 
     private UUID accountWithHistory() {
         UUID id = UUID.randomUUID();
-        handler.handle(id, new AccountCommand.Open(id, "Main", "PLN"));
-        handler.handle(id, new AccountCommand.Deposit(10_000, "salary"));
-        handler.handle(id, new AccountCommand.Withdraw(2_000, "food"));
-        handler.handle(id, new AccountCommand.Withdraw(500, "food"));
-        handler.handle(id, new AccountCommand.Withdraw(1_200, "transport"));
+        handler.handle(id, new Open(id, "Main", "PLN"));
+        handler.handle(id, new Deposit(10_000, "salary"));
+        handler.handle(id, new Withdraw(2_000, "food"));
+        handler.handle(id, new Withdraw(500, "food"));
+        handler.handle(id, new Withdraw(1_200, "transport"));
         return id;
     }
 
