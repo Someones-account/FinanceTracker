@@ -1,7 +1,11 @@
 C:\Projects\FinanceTracker\src\main\java\api\AccountController.java
 C:\Projects\FinanceTracker\src\main\java\api\ApiExceptionHandler.java
 C:\Projects\FinanceTracker\src\main\java\api\BalanceController.java
+C:\Projects\FinanceTracker\src\main\java\api\ReportController.java
 C:\Projects\FinanceTracker\src\main\java\app\AccountCommandHandler.java
+C:\Projects\FinanceTracker\src\main\java\app\BalanceQueryService.java
+C:\Projects\FinanceTracker\src\main\java\app\IdempotencyException.java
+C:\Projects\FinanceTracker\src\main\java\app\IdempotencyService.java
 C:\Projects\FinanceTracker\src\main\java\config\AppConfig.java
 C:\Projects\FinanceTracker\src\main\java\config\ProjectionScheduler.java
 C:\Projects\FinanceTracker\src\main\java\domain\Account.java
